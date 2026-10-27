@@ -1,3 +1,39 @@
+# Export PDF: InDesign-style dialog with downsampling, colour conversion and full marks
+
+Addresses part of gap 9 in `docs/gaps.md` (PDF output presets and standards; #159, #32): output-intent choice beyond the built-in profile, and the full options dialog. `docs/gaps.md`, `ROADMAP.md` and `docs/target-app-parity.md` are updated.
+
+File › Export PDF… becomes a sectioned dialog laid out like InDesign's — **General, Compression, Marks and Bleeds, Output, Advanced, Summary** — with a preset/standard bar and **Save Preset…**. Every control is backed by a real engine feature reachable through `file.exportPdf`, so agents and the CLI get the same capabilities.
+
+## Engine (`designcraft-pdf`, `designcraft-engine`)
+
+- **Compression** (`images: {color, gray, mono, cropToFrames}`) — placed raster images are resampled **per placement by their effective resolution** on the page: Average, Subsampling or Bicubic to a target ppi, only above a threshold ppi; never enlarged. Encoding per class: Automatic (JPEG for photos, ZIP for flat art or transparency), JPEG at five qualities, or ZIP. Black-and-white images stay 1-bit clean (thresholded after resampling) and lossless. **Crop Image Data to Frames** drops pixels outside the frame. JPEGs that need no change are passed through untouched.
+- **Output** (`output: {conversion, destination, includeProfile}`) — process colours, gradient stops, spot alternates and image pixels are converted to a destination profile: *Convert to Destination* or *Preserve Numbers*. RGB images use a 33³ trilinear table (images with their own ICC profile use it). The destination becomes the **output intent** (always for PDF/X; optional otherwise). PDF/X with an RGB destination, or PDF/A with a CMYK one, is skipped with a warning; an unknown profile fails with its name.
+- **Marks and Bleeds** — registration targets, colour bars (process solids, overprints, black tints), custom bleed (`bleedValues`), Include Slug Area (`slug`), and `compressText`.
+
+## UI (`designcraft-ui-egui`)
+
+- New `dialogs/pdf_export.rs`; the settings persist as `PdfExportSettings` (camelCase keys = dialog fields), and saved presets in `UiState.pdf_export_presets`.
+- Built-in presets: Desktop Printing, Commercial Printing, Screen and Email, PDF/X-1a:2003, PDF/X-4, PDF/A-2b. Their values and all descriptions/help texts are our own wording (clean-room).
+- Output shows the PDF/X output-intent fields, the Ink Manager, and hover descriptions; Summary lists every setting and warns about combinations that won't work.
+- Czech translations for all new strings.
+
+## Known limits
+
+- CMYK **JPEGs** are written as placed (not resampled, cropped or converted), with a warning — there's no CMYK JPEG decoder for inks yet.
+- CMYK images are always lossless — the `image` JPEG encoder has no CMYK.
+- Table-cell graphics get compression and conversion but no downsampling/crop (their page transform isn't known there).
+
+## Checks
+
+- `cargo clippy -D warnings` and `cargo fmt --check` on color, pdf, engine, ui-egui; `xtask layers`, `assets`, `pdf-deps` pass.
+- Tests: 2,093 across the four crates, including new end-to-end tests that export real PDFs and inspect them (downsampled pixel sizes, filters, crops, black-and-white samples, CMYK conversion of fills and images, output intent, PDF/X-4 check, bleed/slug boxes, marks), parameter validation for hostile values, and dialog preset/params/summary tests.
+- `cargo xtask wasm` was **not** run (wasm target unavailable in the authoring environment) — please run it.
+- `CRAFT_UI_PDF_EXPORT_FIXTURES=dir cargo test -p designcraft-ui-egui capture_pdf_export` renders every section offscreen.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+https://claude.ai/code/session_01FRonK4MPdbQCwhXBZ2LNzP
+
 <p align="center">
   <a href="https://getartcraft.com/">
     <picture>
