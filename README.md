@@ -1,5 +1,6 @@
 # Export PDF: InDesign-style dialog with downsampling, colour conversion and full marks
 
+
 Addresses part of gap 9 in `docs/gaps.md` (PDF output presets and standards; #159, #32): output-intent choice beyond the built-in profile, and the full options dialog. `docs/gaps.md`, `ROADMAP.md` and `docs/target-app-parity.md` are updated.
 
 File › Export PDF… becomes a sectioned dialog laid out like InDesign's — **General, Compression, Marks and Bleeds, Output, Advanced, Summary** — with a preset/standard bar and **Save Preset…**. Every control is backed by a real engine feature reachable through `file.exportPdf`, so agents and the CLI get the same capabilities.
@@ -33,6 +34,13 @@ File › Export PDF… becomes a sectioned dialog laid out like InDesign's — *
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 https://claude.ai/code/session_01FRonK4MPdbQCwhXBZ2LNzP
+
+<img width="auto" height="460" alt="pdf-export-general" src="https://github.com/user-attachments/assets/3427ee65-5641-482d-b68b-faa9fa219a07" />
+<img width="auto" height="460" alt="pdf-export-compression" src="https://github.com/user-attachments/assets/7e2e1b78-6eeb-4adf-8f8e-fd675e059e60" />
+<img width="auto" height="460" alt="pdf-export-marks" src="https://github.com/user-attachments/assets/aa2e77f7-1c89-4e0c-acba-b79c7ed59931" />
+<img width="auto" height="460" alt="pdf-export-output" src="https://github.com/user-attachments/assets/5f881f7c-e4bd-40e9-a9fa-1b29aee1218a" />
+<img width="auto" height="460" alt="pdf-export-summary" src="https://github.com/user-attachments/assets/e8e579b7-fae6-44af-9c31-6d84fb04dc52" />
+
 
 <p align="center">
   <a href="https://getartcraft.com/">
